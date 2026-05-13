@@ -1,0 +1,262 @@
+#include <iostream> 
+#include <stack> 
+using namespace std; 
+class node { 
+public: 
+int data; 
+node* left; 
+node* right; 
+      
+      
+     
+    
+   
+  
+ 
+      
+    int height; 
+}; 
+ 
+int max(int a, int b) { 
+    return (a > b) ? a : b; 
+} 
+ 
+int height(node* n) { 
+    if (n == NULL) 
+        return 0; 
+    return n->height; 
+} 
+ 
+node* newNode(int key) { 
+    node* n = new node(); 
+    n->data = key; 
+    n->left = NULL; 
+    n->right = NULL; 
+    n->height = 1; 
+    return n; 
+} 
+ 
+// Rotations 
+node* rightRotate(node* y) { 
+    node* x = y->left; 
+    node* T2 = x->right; 
+     
+    x->right = y; 
+    y->left = T2; 
+     
+    y->height = max(height(y->left), height(y->right)) + 1; 
+    x->height = max(height(x->left), height(x->right)) + 1; 
+     
+    return x; 
+} 
+ 
+node* leftRotate(node* x) { 
+    node* y = x->right; 
+    node* T2 = y->left; 
+     
+    y->left = x; 
+    x->right = T2; 
+     
+      
+      
+     
+    
+   
+  
+ 
+      
+    x->height = max(height(x->left), height(x->right)) + 1; 
+    y->height = max(height(y->left), height(y->right)) + 1; 
+     
+    return y; 
+} 
+ 
+int getBalance(node* n) { 
+    if (n == NULL) 
+        return 0; 
+    return height(n->left) - height(n->right); 
+} 
+ 
+node* insert(node* root, int key) { 
+    if (root == NULL) 
+        return newNode(key); 
+         
+    if (key < root->data) 
+        root->left = insert(root->left, key); 
+    else if (key > root->data) 
+        root->right = insert(root->right, key); 
+    else 
+        return root; 
+ 
+    root->height = 1 + max(height(root->left), height(root->right)); 
+     
+    int balance = getBalance(root); 
+     
+    if (balance > 1 && key < root->left->data) 
+        return rightRotate(root); 
+         
+    if (balance < -1 && key > root->right->data) 
+        return leftRotate(root); 
+         
+    if (balance > 1 && key > root->left->data) { 
+        root->left = leftRotate(root->left); 
+        return rightRotate(root); 
+    } 
+     
+    if (balance < -1 && key < root->right->data) { 
+        root->right = rightRotate(root->right); 
+        return leftRotate(root); 
+    } 
+     
+      
+      
+     
+    
+   
+  
+ 
+      
+    return root; 
+} 
+ 
+// Recursive Traversals 
+void inorder(node* root) { 
+    if (root == NULL) return; 
+    inorder(root->left); 
+    cout << root->data << " "; 
+    inorder(root->right); 
+} 
+ 
+void preorder(node* root) { 
+    if (root == NULL) return; 
+    cout << root->data << " "; 
+    preorder(root->left); 
+    preorder(root->right); 
+} 
+ 
+void postorder(node* root) { 
+    if (root == NULL) return; 
+    postorder(root->left); 
+    postorder(root->right); 
+    cout << root->data << " "; 
+} 
+ 
+// Non-Recursive Traversals 
+void inorderNR(node* root) { 
+    stack<node*> s; 
+    node* curr = root; 
+    while (curr != NULL || !s.empty()) { 
+        while (curr != NULL) { 
+            s.push(curr); 
+            curr = curr->left; 
+        } 
+        curr = s.top(); 
+        s.pop(); 
+        cout << curr->data << " "; 
+        curr = curr->right; 
+    } 
+} 
+ 
+void preorderNR(node* root) { 
+    if (root == NULL) return; 
+      
+      
+     
+    
+   
+  
+ 
+      
+    stack<node*> s; 
+    s.push(root); 
+    while (!s.empty()) { 
+        node* curr = s.top(); 
+        s.pop(); 
+        cout << curr->data << " "; 
+        if (curr->right) s.push(curr->right); 
+        if (curr->left) s.push(curr->left); 
+    } 
+} 
+ 
+void postorderNR(node* root) { 
+    if (root == NULL) return; 
+    stack<node*> s1, s2; 
+    s1.push(root); 
+    while (!s1.empty()) { 
+        node* curr = s1.top(); 
+        s1.pop(); 
+        s2.push(curr); 
+        if (curr->left) s1.push(curr->left); 
+        if (curr->right) s1.push(curr->right); 
+    } 
+    while (!s2.empty()) { 
+        cout << s2.top()->data << " "; 
+        s2.pop(); 
+    } 
+} 
+ 
+// Menu Driven Main 
+int main() { 
+    node* root = NULL; 
+    int choice, n, val; 
+     
+    do { 
+        cout << "\n1. Create AVL Tree"; 
+        cout << "\n2. Recursive Inorder"; 
+        cout << "\n3. Recursive Preorder"; 
+        cout << "\n4. Recursive Postorder"; 
+        cout << "\n5. Non-Recursive Inorder"; 
+        cout << "\n6. Non-Recursive Preorder"; 
+        cout << "\n7. Non-Recursive Postorder"; 
+        cout << "\n8. Exit"; 
+        cout << "\nEnter choice: "; 
+      
+      
+     
+    
+   
+  
+ 
+      
+        cin >> choice; 
+         
+        switch (choice) { 
+            case 1: 
+                cout << "Enter number of nodes: "; 
+                cin >> n; 
+                cout << "Enter values:\n"; 
+                for (int i = 0; i < n; i++) { 
+                    cin >> val; 
+                    root = insert(root, val); 
+                } 
+                break; 
+            case 2: 
+                cout << "Recursive Inorder: "; 
+                inorder(root); 
+                break; 
+            case 3: 
+                cout << "\nRecursive Preorder: "; 
+                preorder(root); 
+                break; 
+            case 4: 
+                cout << "\nRecursive Postorder: "; 
+                postorder(root); 
+                break; 
+            case 5: 
+                cout << "\nNon-Recursive Inorder: "; 
+                inorderNR(root); 
+                break; 
+            case 6: 
+                cout << "\nNon-Recursive Preorder: "; 
+                preorderNR(root); 
+                break; 
+            case 7: 
+                cout << "\nNon-Recursive Postorder: "; 
+                postorderNR(root); 
+                break; 
+        } 
+    } while (choice != 8); 
+     
+    return 0; 
+} 
+ 

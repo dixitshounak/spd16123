@@ -1,0 +1,95 @@
+#include <iostream> 
+using namespace std; 
+ 
+#define INF 9999           
+#define MAX_V 10         
+ 
+int main() { 
+    cout << "Prim's Minimum Spanning Tree\n"; 
+ 
+    int V1; 
+    cout << "Enter number of ver ces (1 to " << MAX_V << "): "; 
+    cin >> V1; 
+ 
+    if (V1 <= 0 || V1 > MAX_V) { 
+        cerr << "Error: Number of ver ces must be between 1 and " << MAX_V << ".\n"; 
+        return 1; 
+    } 
+ 
+    int G[V1][V1]; 
+ 
+    for (int i = 0; i < V1; ++i) { 
+        for (int j = 0; j < V1; ++j) { 
+            G[i][j] = INF; 
+        } 
+    } 
+ 
+    cout << "\nEnter edge weights (enter 0 for no edge):\n"; 
+    for (int i = 0; i < V1; ++i) { 
+        for (int j = i; j < V1; ++j) { 
+            if (i == j) { 
+                con nue;  
+            } 
+ 
+            int w; 
+            cout << "Weight from " << i << " to " << j << ": "; 
+            cin >> w; 
+ 
+            if (w == 0) { 
+                w = INF;  
+            } 
+ 
+            G[i][j] = w; 
+            G[j][i] = w;  
+        } 
+    } 
+ 
+    cout << "\nAdjacency Matrix (INF = no edge):\n"; 
+    for (int i = 0; i < V1; ++i) { 
+        for (int j = 0; j < V1; ++j) { 
+            if (G[i][j] == INF) { 
+                cout << "INF "; 
+            } else { 
+                cout << G[i][j] << " "; 
+            } 
+        } 
+        cout << endl; 
+    } 
+ 
+    int selected[MAX_V] = {0}; 
+    selected[0] = 1;  
+ 
+    int no_edge = 0; 
+    int total_cost = 0; 
+ 
+    cout << "\nEdge : Weight\n"; 
+ 
+    while (no_edge < V1 - 1) { 
+        int min_weight = INF; 
+        int u = -1, v = -1; 
+ 
+        for (int i = 0; i < V1; ++i) { 
+            if (selected[i]) { 
+                for (int j = 0; j < V1; ++j) { 
+                    if (!selected[j] && G[i][j] != INF) { 
+                        if (G[i][j] < min_weight) { 
+                            min_weight = G[i][j]; 
+                            u = i; 
+                            v = j; 
+                        } 
+                    } 
+                } 
+            } 
+        } 
+ 
+        if (u != -1 && v != -1) { 
+            cout << u << " - " << v << " : " << min_weight << endl; 
+            selected[v] = 1; 
+            total_cost += min_weight; 
+            no_edge++; 
+        } 
+    } 
+ 
+cout << "\nTotal cost of MST = " << total_cost << endl; 
+return 0; 
+}  

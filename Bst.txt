@@ -1,0 +1,322 @@
+#include<iostream>  
+#include <stack>  
+#include <stdlib.h>  
+using namespace std;  
+struct node {  
+int data;  
+struct node *left;  
+struct node *right;  
+};  
+struct node *createNode(int val) {  
+struct node *temp = (struct node *)malloc(sizeof(struct node));  
+    temp->data = val;  
+    temp->left = temp->right = NULL;  
+    return temp;  
+}  
+  
+void inorderrec(struct node *root) {  
+    if (root == NULL) {  
+        return;  
+    }  
+    inorderrec(root->left);  
+    cout << root->data << " ";  
+    inorderrec(root->right);  
+}  
+      
+      
+     
+    
+   
+  
+ 
+      
+  
+void preorderrec(struct node *root) {  
+    if (root == NULL) {  
+        return;  
+    }  
+    cout << root->data << " ";  
+    preorderrec(root->left);  
+    preorderrec(root->right);  
+}  
+  
+void postorderrec(struct node *root) {  
+    if (root == NULL) {  
+        return;  
+    }  
+    postorderrec(root->left);  
+    postorderrec(root->right);  
+    cout << root->data << " ";  
+}  
+  
+struct node* insertNode(struct node* node, int val) {  
+    if (node == NULL) return createNode(val);  
+    if (val < node->data)  
+        node->left = insertNode(node->left, val);  
+    else if (val > node->data)  
+        node->right = insertNode(node->right, val);  
+    return node;  
+}  
+  
+void preordernonrec(struct node *root) {  
+    if (root == NULL) {  
+        cout << "The Tree is Empty ";  
+        return;  
+    }  
+    stack<node *> nodeStack;  
+    nodeStack.push(root);  
+    while (!nodeStack.empty()) {  
+        struct node *temp_node = nodeStack.top();  
+        nodeStack.pop();  
+        cout << temp_node->data << " ";  
+        if (temp_node->right)  
+            nodeStack.push(temp_node->right);  
+        if (temp_node->left)  
+            nodeStack.push(temp_node->left);  
+      
+      
+     
+    
+   
+  
+ 
+      
+    }  
+}  
+  
+void postordernonrec(struct node* root) {  
+    if (root == NULL) {  
+        cout << "The Tree is Empty ";  
+        return;  
+    }  
+    stack<node *> s1, s2;  
+    s1.push(root);  
+    node* node;  
+    while (!s1.empty()) {  
+        node = s1.top();  
+        s1.pop();  
+        s2.push(node);  
+        if (node->left)  
+            s1.push(node->left);  
+        if (node->right)  
+            s1.push(node->right);  
+    }  
+    while (!s2.empty()) {  
+        node = s2.top();  
+        s2.pop();  
+        cout << node->data << " ";  
+    }  
+}  
+  
+void inordernonrec(struct node *root) {  
+    if (root == NULL) {  
+        cout << "The Tree is Empty ";  
+        return;  
+    }  
+    stack<node *> s;  
+    node *curr = root;  
+    while (curr != NULL || !s.empty()) {  
+        while (curr != NULL) {  
+            s.push(curr);  
+            curr = curr->left;  
+        }  
+        curr = s.top();  
+        s.pop();  
+        cout << curr->data << " ";  
+        curr = curr->right;  
+      
+      
+     
+    
+   
+  
+ 
+      
+    }  
+}  
+  
+void printCurrentLevel(node* root, int level) {  
+    if (root == NULL)  
+        return;  
+    if (level == 1)  
+        cout << root->data << " ";  
+    else {  
+        printCurrentLevel(root->left, level - 1);  
+        printCurrentLevel(root->right, level - 1);  
+    }  
+}  
+  
+int height(node* node) {  
+    if (node == NULL)  
+        return 0;  
+    int lheight = height(node->left);  
+    int rheight = height(node->right);  
+    return (lheight > rheight) ? (lheight + 1) : (rheight + 1);  
+}  
+  
+void printLevelOrder(node* root) {  
+    int h = height(root);  
+    for (int i = 1; i <= h; i++)  
+        printCurrentLevel(root, i);  
+}  
+  
+bool searchBST(node* root, int key) {  
+    if (root == NULL)  
+        return false;  
+    if (root->data == key)  
+        return true;  
+    if (key < root->data)  
+        return searchBST(root->left, key);  
+    return searchBST(root->right, key);  
+}  
+  
+struct node* minValueNode(struct node* node) {  
+    struct node* current = node;  
+    while (current && current->left != NULL)  
+        current = current->left;  
+    return current;  
+      
+      
+     
+    
+   
+  
+ 
+      
+}  
+  
+struct node* deleteNode(struct node* root, int key) {  
+    if (root == NULL) {  
+        cout << "The Tree is Empty" << endl;  
+        return root;  
+    }  
+    if (key < root->data)  
+        root->left = deleteNode(root->left, key);  
+    else if (key > root->data)  
+        root->right = deleteNode(root->right, key);  
+    else {  
+        if (root->left == NULL && root->right == NULL)  
+            return NULL;  
+        else if (root->left == NULL) {  
+            struct node* temp = root->right;  
+            free(root);  
+            return temp;  
+        }  
+        else if (root->right == NULL) {  
+            struct node* temp = root->left;  
+            free(root);  
+            return temp;  
+        }  
+        struct node* temp = minValueNode(root->right);  
+        root->data = temp->data;  
+        root->right = deleteNode(root->right, temp->data);  
+    }  
+    return root;  
+}  
+  
+int main() {  
+    int choice, num, delnum;  
+    struct node *root = NULL;  
+  
+    while (1) {  
+        cout << endl;  
+        cout<<"*** Welcome to BST operations ***"<<endl;  
+        cout << "1.Insert the data: " << endl;  
+        cout << "2.Recursive Inorder Traversal" << endl;  
+        cout << "3.Recursive Preorder Traversal" << endl;  
+        cout << "4.Recursive Post Traversal" << endl;  
+        cout << "5.Non-Recursive Inorder Traversal" << endl;  
+      
+      
+     
+    
+   
+  
+ 
+      
+        cout << "6.Non-Recursive Preorder Traversal" << endl;  
+        cout << "7.Non-Recursive Post Traversal" << endl;  
+        cout << "8.Level Wise Printing" << endl;  
+        cout << "9.Deletion of Node" << endl;  
+        cout << "10.Search" << endl;  
+        cout << "11.Quit" << endl;  
+        cout << "***Enter your choice***"<<endl;  
+        cin >> choice;  
+  
+        switch (choice) {  
+        case 1:  
+            cout << "Enter the data to be inserted" << endl;  
+            cin >> num;  
+            root = insertNode(root, num);  
+            break;  
+        case 2:  
+            cout << "Recursive inorder traversal of tree" << endl;  
+            inorderrec(root);  
+            cout<<"\n";  
+            break;  
+        case 3:  
+            cout << "Recursive preorder traversal of tree" << endl;  
+            preorderrec(root);  
+            cout<<"\n";  
+            break;  
+        case 4:  
+            cout << "Recursive postorder traversal of tree" << endl;  
+            postorderrec(root);  
+            cout<<"\n";  
+            break;  
+        case 5:  
+            cout << "Non Recursive inorder traversal of tree" << endl;  
+            inordernonrec(root);  
+            cout<<"\n";  
+            break;  
+        case 6:  
+            cout << "Non Recursive preorder traversal of tree" << endl;  
+            preordernonrec(root);  
+            cout<<"\n";  
+            break;  
+        case 7:  
+            cout << "Non Recursive postorder traversal of tree" << endl;  
+            postordernonrec(root);  
+      
+      
+     
+    
+   
+  
+ 
+      
+            cout<<"\n";  
+            break;  
+        case 8:  
+            cout << "The Level-Wise Printing is" << endl;  
+            printLevelOrder(root);  
+            cout<<"\n";  
+            break;  
+        case 9:  
+            cout << "The inorder traversal of given tree is" << endl;  
+            inorderrec(root);  
+            cout << "\nEnter the Number to be deleted\n";  
+            cin >> delnum;  
+            root = deleteNode(root, delnum);  
+            cout << "Inorder traversal after deletion" << endl;  
+            inorderrec(root);  
+            cout<<"\n";  
+            break;  
+        case 10:  
+            int key;  
+            cout << "Enter Key to search" << endl;  
+            cin >> key;  
+            if (searchBST(root, key))  
+                cout << key << " Found in tree" << endl;  
+            else  
+                cout << key << " Not Found in tree" << endl;  
+            break;  
+        case 11:  
+            exit(1);  
+        default:  
+            cout << "Wrong choice";  
+        }  
+    }  
+return 0;  
+} 
+ 

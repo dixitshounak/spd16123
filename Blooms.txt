@@ -1,0 +1,93 @@
+#include<iostream> 
+#include<string.h> 
+#include<math.h> 
+using namespace std; 
+//Bloom Filter Functions 
+int h1(string s, int arrSize) 
+      
+      
+     
+    
+   
+  
+ 
+      
+{ 
+    int hash = 0; 
+    for(int i=0;i<s.size();i++) 
+    { 
+        hash = hash + (int(s[i])); 
+        hash = hash % arrSize; 
+    } 
+    return hash; 
+} 
+ 
+int h2(string s, int arrSize) 
+{ 
+    int hash = 1; 
+    for(int i=0;i<s.size();i++) 
+    { 
+        hash = hash + (i*int(s[i])); 
+        hash = hash % arrSize; 
+    } 
+    return hash; 
+} 
+ 
+int h3(string s, int arrSize) 
+{ 
+    int hash = 2; 
+    for(int i=0;i<s.size();i++) 
+    { 
+        hash = hash + pow(19,i); 
+        hash = hash % arrSize; 
+    } 
+    return hash; 
+} 
+ 
+void insert(int bfilter[10], string name, int arrSize) 
+{ 
+    int a = h1(name,arrSize); 
+    int b = h2(name,arrSize); 
+    int c = h3(name,arrSize); 
+ 
+    if(bfilter[a]==1 && bfilter[b]==1 && bfilter[c]==1) 
+    { 
+        cout<<"\nThe Name is Probably Present !!"; 
+    } 
+    else 
+      
+      
+     
+    
+   
+  
+ 
+      
+    { 
+        bfilter[a] = 1; 
+        bfilter[b] = 1; 
+        bfilter[c] = 1; 
+         
+        cout<<name<<" is inserted !!"; 
+    } 
+} 
+ 
+int main() 
+{ 
+     
+    int bfilter[10],choice; 
+    string name; 
+    for(int i=0;i<10;i++) 
+    { 
+        bfilter[i]=0; 
+    } 
+    do 
+    { 
+        cout<<"\nEnter The name you Want To Insert : "; 
+        cin>>name; 
+        insert(bfilter,name,10); 
+        cout<<"\nDo You Want to insert another number(1/0) : "; 
+        cin>>choice; 
+    }while(choice!=0); 
+ 
+}

@@ -1,0 +1,272 @@
+#include <iostream> 
+using namespace std; 
+ 
+struct node 
+{ 
+    int data; 
+    node *left, *right; 
+    int lbit, rbit; // 1 = child, 0 = thread 
+}; 
+ 
+/*---------------- 
+  CREATE HEAD ----------------*/ 
+node* createHead() 
+{ 
+    node *head = new node; 
+    head->data = -1; 
+    head->left = head; 
+    head->right = head; 
+    head->lbit = 0; 
+    head->rbit = 1; 
+    return head; 
+} 
+ 
+/*---------------- 
+  INSERT -----------------*/ 
+node* insert(node* head, int key) 
+{ 
+    node *ptr = head->left; 
+    node *par = head; 
+     
+    while (ptr != head) 
+    { 
+        if (key == ptr->data) 
+        { 
+            cout << "Duplicate key!\n"; 
+            return head; 
+      
+      
+     
+    
+   
+  
+ 
+      
+        } 
+        par = ptr; 
+        if (key < ptr->data) 
+        { 
+            if (ptr->lbit == 1) 
+                ptr = ptr->left; 
+            else 
+                break; 
+        } 
+        else 
+        { 
+            if (ptr->rbit == 1) 
+                ptr = ptr->right; 
+            else 
+                break; 
+        } 
+    } 
+     
+    node *tmp = new node; 
+    tmp->data = key; 
+    tmp->lbit = 0; 
+    tmp->rbit = 0; 
+ 
+    /* First Node */ 
+    if (par == head) 
+    { 
+        tmp->left = head; 
+        tmp->right = head; 
+        head->left = tmp; 
+        head->lbit = 1; 
+    } 
+    /* Insert Left */ 
+    else if (key < par->data) 
+    { 
+        tmp->left = par->left; 
+        tmp->right = par; 
+        par->lbit = 1; 
+        par->left = tmp; 
+    } 
+    /* Insert Right */ 
+    else 
+    { 
+        tmp->left = par; 
+      
+      
+     
+    
+   
+  
+ 
+      
+        tmp->right = par->right; 
+        par->rbit = 1; 
+        par->right = tmp; 
+    } 
+     
+    return head; 
+} 
+ 
+/*----------------------- 
+  RECURSIVE TRAVERSALS -----------------------*/ 
+void inorderRecursive(node *root) 
+{ 
+    if (root == NULL) 
+        return; 
+    if (root->lbit == 1) 
+        inorderRecursive(root->left); 
+    cout << root->data << " "; 
+    if (root->rbit == 1) 
+        inorderRecursive(root->right); 
+} 
+ 
+void preorderRecursive(node *root) 
+{ 
+    if (root == NULL) 
+        return; 
+    cout << root->data << " "; 
+    if (root->lbit == 1) 
+        preorderRecursive(root->left); 
+    if (root->rbit == 1) 
+        preorderRecursive(root->right); 
+} 
+ 
+void postorderRecursive(node *root) 
+{ 
+    if (root == NULL) 
+        return; 
+    if (root->lbit == 1) 
+        postorderRecursive(root->left); 
+    if (root->rbit == 1) 
+        postorderRecursive(root->right); 
+    cout << root->data << " "; 
+} 
+      
+      
+     
+    
+   
+  
+ 
+      
+ 
+ 
+/*-------------------- 
+  INORDER SUCCESSOR --------------------*/ 
+node* inorderSuccessor(node* ptr) 
+{ 
+    if (ptr->rbit == 0) 
+        return ptr->right; 
+    ptr = ptr->right; 
+    while (ptr->lbit == 1) 
+        ptr = ptr->left; 
+    return ptr; 
+} 
+ 
+/*------------------------- 
+  NON-RECURSIVE INORDER -------------------------*/ 
+void inorderNonRecursive(node *head) 
+{ 
+    if (head->lbit == 0) 
+    { 
+        cout << "Tree empty\n"; 
+        return; 
+    } 
+    node *ptr = head->left; 
+    while (ptr->lbit == 1) 
+        ptr = ptr->left; 
+         
+    while (ptr != head) 
+    { 
+        cout << ptr->data << " "; 
+        ptr = inorderSuccessor(ptr); 
+    } 
+} 
+ 
+/*------------------------- 
+  NON-RECURSIVE PREORDER -------------------------*/ 
+void preorderNonRecursive(node *head) 
+{ 
+    if (head->lbit == 0) 
+    { 
+      
+      
+     
+    
+   
+  
+ 
+      
+        cout << "Tree empty\n"; 
+        return; 
+    } 
+    node *ptr = head->left; 
+    while (ptr != head) 
+    { 
+        cout << ptr->data << " "; 
+        if (ptr->lbit == 1) 
+        { 
+            ptr = ptr->left; 
+        } 
+        else 
+        { 
+            while (ptr != head && ptr->rbit == 0) 
+                ptr = ptr->right; 
+            ptr = ptr->right; 
+        } 
+    } 
+} 
+ 
+/*---------------- 
+  MAIN FUNCTION ----------------*/ 
+int main() 
+{ 
+    node *head = createHead(); 
+    int choice, num; 
+     
+    while (1) 
+    { 
+        cout << "\n1. Insert"; 
+        cout << "\n2. Recursive Inorder"; 
+        cout << "\n3. Recursive Preorder"; 
+        cout << "\n4. Recursive Postorder"; 
+        cout << "\n5. Non-Recursive Inorder (Threaded)"; 
+        cout << "\n6. Non-Recursive Preorder (Threaded)"; 
+        cout << "\n7. Exit"; 
+        cout << "\nEnter choice: "; 
+        cin >> choice; 
+         
+        switch (choice) 
+        { 
+            case 1: 
+      
+      
+     
+    
+   
+  
+ 
+      
+                cout << "Enter number: "; 
+                cin >> num; 
+                head = insert(head, num); 
+                break; 
+            case 2: 
+                if (head->lbit) 
+                    inorderRecursive(head->left); 
+                break; 
+            case 3: 
+                if (head->lbit) 
+                    preorderRecursive(head->left); 
+                break; 
+            case 4: 
+                if (head->lbit) 
+                    postorderRecursive(head->left); 
+                break; 
+            case 5: 
+                inorderNonRecursive(head); 
+                break; 
+            case 6: 
+                preorderNonRecursive(head); 
+                break; 
+            case 7: 
+                return 0; 
+        } 
+        cout << endl; 
+    } 
+    return 0; 
+}

@@ -1,0 +1,72 @@
+#include <iostream> 
+#include <string> 
+#include <algorithm> 
+using namespace std; 
+const int col = 10; 
+const int row = 3; 
+class CountMinSketch 
+{ 
+private: 
+int table[row][col]; 
+int hash1(const string& key) { 
+      
+      
+     
+    
+   
+  
+ 
+      
+        if (key.empty()) return 0; 
+        return int(key[0]) % col; 
+    } 
+ 
+    int hash2(const string& key) { 
+        if (key.empty()) return 0; 
+        return (int(key[0]) + 2) % col; 
+    } 
+ 
+    int hash3(const string& key) { 
+        if (key.empty()) return 0; 
+        return (int(key[0]) * 4) % col; 
+    } 
+ 
+public: 
+    CountMinSketch() { 
+        for (int i = 0; i < row; ++i) 
+            for (int j = 0; j < col; ++j) 
+                table[i][j] = 0; 
+    } 
+ 
+    void insert(const string& item, int count = 1) { 
+        table[0][hash1(item)] += count; 
+        table[1][hash2(item)] += count; 
+        table[2][hash3(item)] += count; 
+    } 
+ 
+    int FindCount(const string& item) { 
+        int c1 = table[0][hash1(item)]; 
+        int c2 = table[1][hash2(item)]; 
+        int c3 = table[2][hash3(item)]; 
+        return min(c1, min(c2, c3)); 
+    } 
+}; 
+ 
+int main() { 
+    CountMinSketch cms; 
+    string input, query; 
+    int n; 
+ 
+    cout << "How many inputs are there: "; 
+    cin >> n; 
+ 
+for(int i = 1; i <= n; i++) { 
+cout << "Enter input " << i << ": "; 
+cin >> input; 
+cms.insert(input); 
+} 
+cout << "Enter element to find count: "; 
+cin >> query; 
+cout << "Count for " << query << " : " << cms.FindCount(query) << endl; 
+return 0; 
+}
