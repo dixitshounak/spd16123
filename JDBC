@@ -1,0 +1,302 @@
+import java.sql.*;
+import java.util.Scanner;
+
+public class StudentManagement {
+
+    public static void main(String[] args) {
+
+        Connection con = null;
+        Statement st = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        Scanner sc = new Scanner(System.in);
+
+        try {
+
+            // STEP 1 : LOAD DRIVER
+
+            Class.forName("oracle.jdbc.driver.OracleDriver");
+
+            // STEP 2 : ESTABLISH CONNECTION
+
+            con = DriverManager.getConnection(
+
+                    "jdbc:oracle:thin:@localhost:1521:XE",
+
+                    "system",
+
+                    "your_password"
+
+            );
+
+            System.out.println("Connected to Oracle Database");
+
+            // STEP 3 : CREATE TABLE
+
+            st = con.createStatement();
+
+            String createTable =
+
+                    "CREATE TABLE STUDENT (" +
+                            "STUDENT_ID NUMBER PRIMARY KEY, " +
+                            "STUDENT_NAME VARCHAR2(50), " +
+                            "CITY VARCHAR2(30))";
+
+            try {
+
+                st.executeUpdate(createTable);
+
+                System.out.println("Table Created");
+
+            }
+
+            catch(Exception e) {
+
+                System.out.println("Table Already Exists");
+
+            }
+
+            while(true) {
+
+                System.out.println("\n===== MENU =====");
+
+                System.out.println("1. Insert");
+
+                System.out.println("2. Update");
+
+                System.out.println("3. Delete");
+
+                System.out.println("4. Display");
+
+                System.out.println("5. Search");
+
+                System.out.println("6. Exit");
+
+                System.out.print("Enter Choice : ");
+
+                int ch = sc.nextInt();
+
+                switch(ch) {
+
+                    // INSERT
+
+                    case 1:
+
+                        ps = con.prepareStatement(
+
+                                "INSERT INTO STUDENT VALUES(?,?,?)"
+
+                        );
+
+                        System.out.print("Enter Student ID : ");
+
+                        int id = sc.nextInt();
+
+                        sc.nextLine();
+
+                        System.out.print("Enter Student Name : ");
+
+                        String name = sc.nextLine();
+
+                        System.out.print("Enter City : ");
+
+                        String city = sc.nextLine();
+
+                        ps.setInt(1,id);
+
+                        ps.setString(2,name);
+
+                        ps.setString(3,city);
+
+                        int i = ps.executeUpdate();
+
+                        if(i > 0) {
+
+                            System.out.println("Record Inserted");
+
+                        }
+
+                        break;
+
+                    // UPDATE
+
+                    case 2:
+
+                        ps = con.prepareStatement(
+
+                                "UPDATE STUDENT SET CITY=? WHERE STUDENT_ID=?"
+
+                        );
+
+                        sc.nextLine();
+
+                        System.out.print("Enter New City : ");
+
+                        String newCity = sc.nextLine();
+
+                        System.out.print("Enter Student ID : ");
+
+                        int sid = sc.nextInt();
+
+                        ps.setString(1,newCity);
+
+                        ps.setInt(2,sid);
+
+                        int u = ps.executeUpdate();
+
+                        if(u > 0) {
+
+                            System.out.println("Record Updated");
+
+                        }
+
+                        else {
+
+                            System.out.println("Record Not Found");
+
+                        }
+
+                        break;
+
+                    // DELETE
+
+                    case 3:
+
+                        ps = con.prepareStatement(
+
+                                "DELETE FROM STUDENT WHERE STUDENT_ID=?"
+
+                        );
+
+                        System.out.print("Enter Student ID : ");
+
+                        int did = sc.nextInt();
+
+                        ps.setInt(1,did);
+
+                        int d = ps.executeUpdate();
+
+                        if(d > 0) {
+
+                            System.out.println("Record Deleted");
+
+                        }
+
+                        else {
+
+                            System.out.println("Record Not Found");
+
+                        }
+
+                        break;
+
+                    // DISPLAY
+
+                    case 4:
+
+                        st = con.createStatement();
+
+                        rs = st.executeQuery(
+
+                                "SELECT * FROM STUDENT"
+
+                        );
+
+                        System.out.println("\nSTUDENT RECORDS");
+
+                        System.out.println("--------------------------");
+
+                        while(rs.next()) {
+
+                            System.out.println(
+
+                                    rs.getInt("STUDENT_ID")
+                                            + "  " +
+
+                                            rs.getString("STUDENT_NAME")
+                                            + "  " +
+
+                                            rs.getString("CITY")
+
+                            );
+                        }
+
+                        break;
+
+                    // SEARCH
+
+                    case 5:
+
+                        ps = con.prepareStatement(
+
+                                "SELECT * FROM STUDENT WHERE STUDENT_ID=?"
+
+                        );
+
+                        System.out.print("Enter Student ID : ");
+
+                        int searchId = sc.nextInt();
+
+                        ps.setInt(1,searchId);
+
+                        rs = ps.executeQuery();
+
+                        if(rs.next()) {
+
+                            System.out.println(
+
+                                    rs.getInt("STUDENT_ID")
+                                            + "  " +
+
+                                            rs.getString("STUDENT_NAME")
+                                            + "  " +
+
+                                            rs.getString("CITY")
+
+                            );
+                        }
+
+                        else {
+
+                            System.out.println("Record Not Found");
+
+                        }
+
+                        break;
+
+                    // EXIT
+
+                    case 6:
+
+                        if(rs != null)
+                            rs.close();
+
+                        if(ps != null)
+                            ps.close();
+
+                        if(st != null)
+                            st.close();
+
+                        if(con != null)
+                            con.close();
+
+                        System.out.println("Connection Closed");
+
+                        System.exit(0);
+
+                    default:
+
+                        System.out.println("Invalid Choice");
+                }
+            }
+
+        }
+
+        catch(Exception e) {
+
+            System.out.println(e);
+
+        }
+    }
+}
